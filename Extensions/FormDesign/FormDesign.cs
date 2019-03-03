@@ -79,7 +79,7 @@ namespace Extensions
 
 		public static void Switch()
 		{
-			Design = List.Next(Design);
+			Design = List.Next(Design) ?? List[0];
 		}
 
 		public static void Switch(FormDesign newDesign, bool forceSave = false, bool forceRefresh = false)
@@ -230,6 +230,7 @@ namespace Extensions
 					 EqualityComparer<Color>.Default.Equals(LabelColor, design.LabelColor) &&
 					 EqualityComparer<Color>.Default.Equals(InfoColor, design.InfoColor) &&
 					 EqualityComparer<Color>.Default.Equals(ActiveColor, design.ActiveColor) &&
+					 EqualityComparer<Color>.Default.Equals(ActiveForeColor, design.ActiveForeColor) &&
 					 EqualityComparer<Color>.Default.Equals(RedColor, design.RedColor) &&
 					 EqualityComparer<Color>.Default.Equals(GreenColor, design.GreenColor) &&
 					 EqualityComparer<Color>.Default.Equals(YellowColor, design.YellowColor) &&

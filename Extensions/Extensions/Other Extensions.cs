@@ -165,6 +165,21 @@ namespace Extensions
 					return size;
 			}
 		}
+		
+		/// <summary>
+		/// Gets the Data Size in the <see cref="SizeLength"/> format, base size must be in Bytes
+		/// </summary>
+		public static string SizeString(this long size)
+		{
+			if (size > Math.Pow(1024, 3))
+				return $"{size.Size(SizeLength.GB)} GB";
+			else if (size > Math.Pow(1024, 2))
+				return $"{size.Size(SizeLength.MB)} MB";
+			else if (size > Math.Pow(1024, 1))
+				return $"{size.Size(SizeLength.KB)} KB";
+			 
+			return $"{size.Size(SizeLength.B)} Bytes";
+		}
 
 		/// <summary>
 		/// Swaps 2 variable values

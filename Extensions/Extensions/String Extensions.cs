@@ -122,34 +122,33 @@ namespace Extensions
 		/// <summary>
 		/// Changes the value of the string to <paramref name="value"/> if the string is null or white space
 		/// </summary>
-		public static string IfEmpty(this string S, string value)
-			=> string.IsNullOrWhiteSpace(S) ? value : S;
+		public static string IfEmpty(this string S, string value, string @else = null)
+			=> string.IsNullOrWhiteSpace(S) ? value : (@else ?? S);
 
 		/// <summary>
 		/// Lists all the strings in the <see cref="IEnumerable{string}"/> next to each other in one <see cref="string"/>
-		/// </summary>
-		public static string ListStrings(this IEnumerable<string> list) => list.ListStrings(x => x);
 
 		public static string ListStrings<T>(this IEnumerable<T> list, string seperator)
-			=> list.ListStrings(x => $"{x}{seperator}", false);
+			=> list.ListStrings(x => x + seperator, false);
 
 		/// <summary>
 		/// Lists all the strings in the <see cref="IEnumerable{string}"/> with a set <paramref name="Format"/>
 		/// </summary>
 		/// <param name="Format">Format to change each string, null leaves the strings as they are</param>
-		public static string ListStrings<T>(this IEnumerable<T> list, Func<T, string> Format, bool applyToLast = true)
+		public static string ListStrings<T>(this IEnumerable<T> list, Func<T, string> Format = null, bool applyToLast = true)
 		{
 			if (list == null)
 				return string.Empty;
 
 			var SB = new StringBuilder();
+			var arr = list.ToArray();
 
-			for (int i = 0; i < list.Count(); i++)
+			for (int i = 0; i < arr.Length; i++)
 			{
-				if (!applyToLast && i == list.Count() - 1)
-					SB.Append(list.ElementAt(i));
+				if (!applyToLast && i == arr.Length - 1)
+					SB.Append(arr[i]);
 				else
-					SB.Append(Format(list.ElementAt(i)));
+					SB.Append(Format?.Invoke(arr[i]) ?? arr[i].ToString());
 			}
 
 			return SB.ToString();

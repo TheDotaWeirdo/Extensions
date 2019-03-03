@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
+using System.Drawing;
 
 namespace Extensions
 {
@@ -15,7 +16,7 @@ namespace Extensions
 					Ice,
 					Chic,
 					Strawberries,
-					Monochrome
+					Dark
 				};
 
 				if (IsCustomEligible())
@@ -120,23 +121,23 @@ namespace Extensions
 			IconColor = Color.FromArgb(210, 149, 114)
 		};
 
-		public static FormDesign Monochrome = new FormDesign("Monochrome", 5, FormDesignType.Dark)
+		public static FormDesign Dark = new FormDesign("Dark", 5, FormDesignType.Dark)
 		{
-			BackColor = Color.FromArgb(42, 41, 42),
-			ForeColor = Color.FromArgb(243, 243, 243),
-			ButtonColor = Color.FromArgb(58, 55, 58),
-			ButtonForeColor = Color.FromArgb(243, 243, 243),
-			AccentColor = Color.FromArgb(73, 74, 79),
-			MenuColor = Color.FromArgb(38, 37, 38),
-			MenuForeColor = Color.FromArgb(215, 216, 218),
-			LabelColor = Color.FromArgb(175, 178, 183),
-			InfoColor = Color.FromArgb(141, 149, 163),
-			ActiveColor = Color.FromArgb(175, 178, 183),
-			ActiveForeColor = Color.FromArgb(243, 243, 243),
-			RedColor = Color.FromArgb(182, 65, 31),
-			GreenColor = Color.FromArgb(116, 207, 168),
-			YellowColor = Color.FromArgb(242, 217, 36),
-			IconColor = Color.FromArgb(196, 200, 207)
+			BackColor = Color.FromArgb(18, 20, 23),
+			ForeColor = Color.FromArgb(215, 218, 224),
+			ButtonColor = Color.FromArgb(33, 37, 43),
+			ButtonForeColor = Color.FromArgb(191, 195, 201),
+			AccentColor = Color.FromArgb(69, 75, 86),
+			MenuColor = Color.FromArgb(22, 24, 29),
+			MenuForeColor = Color.FromArgb(157, 165, 180),
+			LabelColor = Color.FromArgb(171, 178, 191),
+			InfoColor = Color.FromArgb(92, 99, 112),
+			ActiveColor = Color.FromArgb(44, 199, 197),
+			ActiveForeColor = Color.FromArgb(33, 43, 45),
+			RedColor = Color.FromArgb(222, 74, 85),
+			GreenColor = Color.FromArgb(86, 203, 152),
+			YellowColor = Color.FromArgb(205, 151, 100),
+			IconColor = Color.FromArgb(175, 178, 183)
 		};
 
 		public static FormDesign Custom = new FormDesign("Custom", -1, FormDesignType.None);

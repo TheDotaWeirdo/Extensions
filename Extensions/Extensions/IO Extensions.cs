@@ -8,6 +8,28 @@ namespace Extensions
 {
 	public static partial class ExtensionClass
 	{
+		public static string AbreviatedPath(this FileInfo file, bool folder = false)
+			=> AbreviatedPath(folder ? file.DirectoryName : file.FullName);
+
+		public static string AbreviatedPath(this DirectoryInfo folder)
+			=> AbreviatedPath(folder.FullName);
+
+		private static string AbreviatedPath(string path)
+		{
+			if (string.IsNullOrWhiteSpace(path))
+				return string.Empty;
+
+			var items = path.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries);
+			var selectedItems = new List<string>() { items[0] };
+
+			selectedItems.AddRange(items.TakeLast(Math.Min(3, items.Length - 1)));
+
+			if (items.Length != selectedItems.Count)
+				selectedItems.Insert(1, "..");
+
+			return selectedItems.ListStrings("\\");
+		}
+
 		/// <summary>
 		/// Creates a windows Shortcut (.lnk)
 		/// </summary>

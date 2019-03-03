@@ -56,9 +56,8 @@ namespace Extensions
 		/// </summary>
 		public static IEnumerable<T2> Convert<T, T2>(this IEnumerable<T> list, Func<T, T2> func)
 		{
-			var l = new List<T2>(list?.Count() ?? 0);
-			l.AddRange(list, func);
-			return l.AsEnumerable();
+			foreach (var item in list)
+				yield return func(item);
 		}
 
 		/// <summary>
@@ -66,10 +65,8 @@ namespace Extensions
 		/// </summary>
 		public static IEnumerable<T> Convert<T>(this MatchCollection list, Func<Match, T> func)
 		{
-			var l = new List<T>(list.Count);
-			foreach (Match item in list)
-				l.Add(func(item));
-			return l.AsEnumerable();
+			foreach (var item in list)
+				yield return func(item as Match);
 		}
 
 		/// <summary>
@@ -158,14 +155,28 @@ namespace Extensions
 
 		public static T Next<T>(this IEnumerable<T> enumerable, T item)
 		{
-			if (enumerable.Count() == 0)
+			if (!enumerable?.Any() ?? true)
 				return item;
 
-			var list = new List<T>(enumerable);
+			var list = enumerable.ToList();
 			var i = list.IndexOf(item);
-			if (i + 1 >= list.Count)
-				return list.FirstOrDefault();
-			return list[i + 1];
+			if (++i >= list.Count)
+				return default;
+
+			return list[i];
+		}
+
+		public static T Previous<T>(this IEnumerable<T> enumerable, T item)
+		{
+			if (!enumerable?.Any() ?? true)
+				return item;
+
+			var list = enumerable.ToList();
+			var i = list.IndexOf(item);
+			if (--i < 0)
+				return default;
+
+			return list[i];
 		}
 
 		/// <summary>
@@ -179,6 +190,13 @@ namespace Extensions
 
 		public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int count)
 			=> source.Skip(Math.Max(0, source.Count() - count));
+
+		public static IEnumerable<T> ThatAre<T>(this IEnumerable<object> source)
+		{
+			foreach (var item in source)
+				if (item is T conv)
+					yield return conv;
+		}
 
 		public static IEnumerable<T> Trim<T>(this IEnumerable<T> list, Func<T, bool> comparer)
 		{

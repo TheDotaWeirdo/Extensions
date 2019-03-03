@@ -3,12 +3,13 @@
 namespace Extensions
 {
 	public enum ConnectionState { Connected, Disconnected }
+
 	public delegate void ConnectionEventHandler(ConnectionState newState);
 
 	public static class ConnectionHandler
 	{
-		public static ConnectionEventHandler ConnectionChanged;
-		public static ConnectionEventHandler Connected;
+		public static event ConnectionEventHandler ConnectionChanged;
+		public static event ConnectionEventHandler Connected;
 
 		private static Timer checkTimer;
 

@@ -12,8 +12,8 @@ namespace Extensions
 {
 	public class AnimationHandler : IDisposable
 	{
-		public Control AnimatedControl { get; private set; }
-		public Size OriginalSize { get; private set; }
+		public Control AnimatedControl { get; }
+		public Size OriginalSize { get; }
 		public Size NewSize { get; set; }
 
 		public int Interval { get; set; }
@@ -68,7 +68,7 @@ namespace Extensions
 			try
 			{
 				var incWidth = (NewSize.Width - AnimatedControl.Width).Sign() == 1;
-				var nextWidth = (int)(AnimatedControl.Width + ((NewSize.Width - AnimatedControl.Width) / SpeedModifier).Between(incWidth.If(2, -50), incWidth.If(50, -2)));
+				var nextWidth = (int)(AnimatedControl.Width + ((NewSize.Width - AnimatedControl.Width) / SpeedModifier).Between(incWidth.If(3, -50), incWidth.If(50, -3)));
 
 				if (incWidth)
 					nextWidth = nextWidth.Between(AnimatedControl.Width + 1, NewSize.Width);
@@ -76,60 +76,59 @@ namespace Extensions
 					nextWidth = nextWidth.Between(NewSize.Width, AnimatedControl.Width - 1);
 
 				var incHeight = (NewSize.Height - AnimatedControl.Height).Sign() == 1;
-				var nextHeight = (int)(AnimatedControl.Height + ((NewSize.Height - AnimatedControl.Height) / SpeedModifier).Between(incHeight.If(2, -50), incHeight.If(50, -2)));
+				var nextHeight = (int)(AnimatedControl.Height + ((NewSize.Height - AnimatedControl.Height) / SpeedModifier).Between(incHeight.If(3, -50), incHeight.If(50, -3)));
 
 				if (incHeight)
 					nextHeight = nextHeight.Between(AnimatedControl.Height + 1, NewSize.Height);
 				else
 					nextHeight = nextHeight.Between(NewSize.Height, AnimatedControl.Height - 1);
 
-				if (AnimatedControl.InvokeRequired)
-					AnimatedControl.Invoke(new Action(() =>
+				AnimatedControl.TryInvoke(() =>
+				{
+					try
 					{
-						try
-						{
+						if (IgnoreHeight)
+							AnimatedControl.Width = nextWidth;
+						else if (IgnoreWidth)
+							AnimatedControl.Height = nextHeight;
+						else
 							AnimatedControl.Size = new Size(nextWidth, nextHeight);
-							var perc = 0D;
 
-							if (!IgnoreWidth)
-								perc += IgnoreHeight.If(2, 1) * incWidth.If(50, -50) * ((double)AnimatedControl.Width) / NewSize.Width;
+						var perc = 0D;
 
-							if (!IgnoreHeight)
-								perc += IgnoreWidth.If(2, 1) * incHeight.If(50, -50) * ((double)AnimatedControl.Height) / NewSize.Height;
+						if (!IgnoreWidth)
+							perc += IgnoreHeight.If(2, 1) * incWidth.If(50, -50) * ((double)AnimatedControl.Width) / NewSize.Width;
 
-							OnAnimationTick?.Invoke(this, AnimatedControl, perc);
-							if (perc == 100)
-								OnEnd?.Invoke(this, AnimatedControl, perc);
-						}
-						catch { }
-					}));
-				else
-					AnimatedControl.Size = new Size(nextWidth, nextHeight);
+						if (!IgnoreHeight)
+							perc += IgnoreWidth.If(2, 1) * incHeight.If(50, -50) * ((double)AnimatedControl.Height) / NewSize.Height;
+
+						OnAnimationTick?.Invoke(this, AnimatedControl, perc);
+						if (perc == 100)
+							OnEnd?.Invoke(this, AnimatedControl, perc);
+					}
+					catch { }
+				});
 			}
 			catch { }
 
 			if (!disposedValue && CheckIfEnded())
 			{
-				if (AnimatedControl?.InvokeRequired ?? true)
-					AnimatedControl?.Invoke(new Action(() =>
-					{
-						try
-						{
-							AnimatedControl.Size = NewSize;
-							OnAnimationTick?.Invoke(this, AnimatedControl, 100);
-							endAction?.Invoke();
-						}
-						catch { }
-					}));
-				else
+				AnimatedControl?.TryInvoke(() =>
 				{
 					try
 					{
-						AnimatedControl.Size = NewSize;
+						if (IgnoreHeight)
+							AnimatedControl.Width = NewSize.Width;
+						else if (IgnoreWidth)
+							AnimatedControl.Height = NewSize.Height;
+						else
+							AnimatedControl.Size = NewSize;
+
+						OnAnimationTick?.Invoke(this, AnimatedControl, 100);
 						endAction?.Invoke();
 					}
 					catch { }
-				}
+				});
 
 				Dispose();
 			}
@@ -143,7 +142,7 @@ namespace Extensions
 				{
 					if (Lazy)
 					{
-						if (Math.Abs(AnimatedControl.Width - NewSize.Width) > 5)
+						if (Math.Abs(AnimatedControl.Width - NewSize.Width) > 2)
 							return false;
 					}
 					else if (AnimatedControl.Width != NewSize.Width)
@@ -154,7 +153,7 @@ namespace Extensions
 				{
 					if (Lazy)
 					{
-						if (Math.Abs(AnimatedControl.Height - NewSize.Height) > 5)
+						if (Math.Abs(AnimatedControl.Height - NewSize.Height) > 2)
 							return false;
 					}
 					else if (AnimatedControl.Height != NewSize.Height)
@@ -177,8 +176,6 @@ namespace Extensions
 				{
 					Timer?.Dispose();
 				}
-
-				AnimatedControl = null;
 
 				disposedValue = true;
 			}
