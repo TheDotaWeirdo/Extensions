@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Extensions
 {
@@ -28,5 +29,8 @@ namespace Extensions
 		public Color GreenColor { get; set; }
 		public Color YellowColor { get; set; }
 		public Color IconColor { get; set; }
+
+		[JsonIgnore]
+		public Color AccentBackColor => BackColor.Tint(Lum: Type.If(FormDesignType.Dark, 3, -3));
 	}
 }

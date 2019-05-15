@@ -32,13 +32,13 @@ namespace Extensions
 					return FormDesign.Design.ActiveColor;
 
 				case FormState.Busy:
-					return FormDesign.BerryBlues.RedColor;
+					return FormDesign.Design.RedColor;
 
 				case FormState.Working:
-					return FormDesign.BerryBlues.YellowColor;
+					return FormDesign.Design.YellowColor;
 
 				case FormState.Running:
-					return FormDesign.BerryBlues.GreenColor;
+					return FormDesign.Design.GreenColor;
 
 				default:
 					return FormDesign.Design.MenuColor;

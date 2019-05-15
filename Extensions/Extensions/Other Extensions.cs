@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -8,7 +9,7 @@ namespace Extensions
 {
 	public static partial class ExtensionClass
 	{
-		private static Random RNG = new Random(Guid.NewGuid().GetHashCode());
+		public static Random RNG { get; } = new Random(Guid.NewGuid().GetHashCode());
 
 		public enum SizeLength { GB, MB, KB, B, bits }
 
@@ -211,5 +212,59 @@ namespace Extensions
 
 		public static string YesNo(this bool b)
 			=> b ? "Yes" : "No";
+
+		public static bool IsDigit(this Keys keys)
+			=> (keys >= Keys.D0 && keys <= Keys.D9) || (keys >= Keys.NumPad0 && keys <= Keys.NumPad9);
+
+		public static bool IsLetter(this Keys keys)
+			=> ((keys & ~Keys.Shift) >= Keys.A && (keys & ~Keys.Shift) <= Keys.Z);
+
+		public static bool IsDigitOrLetter(this Keys keys)
+			=> keys.IsDigit() || keys.IsLetter();
+
+		public static T Switch<T, T2>(this T2 item, T2 comp1, T val1, T2 comp2, T val2, T valElse)
+		{
+			if (item.Equals(comp1))
+				return val1;
+
+			if (item.Equals(comp2))
+				return val2;
+
+			return valElse;
+		}
+
+		public static T Switch<T, T2>(this T2 item, T2 comp1, T val1, T2 comp2, T val2, T2 comp3, T val3, T valElse)
+		{
+			if (item.Equals(comp1))
+				return val1;
+
+			if (item.Equals(comp2))
+				return val2;
+
+			if (item.Equals(comp3))
+				return val3;
+
+			return valElse;
+		}
+
+		public static string GetDescription(this Enum value)
+		{
+			return value
+					  .GetType()
+					  .GetMember(value.ToString())
+					  .FirstOrDefault()
+					  ?.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>()
+					  ?.Description;
+		}
+
+		public static string[] GetEnumDescs(this Type value)
+		{
+			return Enum.GetValues(value).Cast<Enum>().Select(GetDescription).ToArray();
+		}
+
+		public static Enum GetEnumValueFromDescs(this Type type, string value)
+		{
+			return Enum.GetValues(type).Cast<Enum>().FirstOrDefault(x => x.GetDescription() == value);
+		}
 	}
 }

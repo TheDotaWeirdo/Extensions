@@ -13,6 +13,8 @@ namespace Extensions
 
 		private static Timer checkTimer;
 
+		public static bool IsConnected => state == ConnectionState.Connected;
+
 		private static ConnectionState state = ConnectionState.Disconnected;
 
 		public static ConnectionState State
@@ -64,6 +66,14 @@ namespace Extensions
 			{
 				return ConnectionState.Disconnected;
 			}
+		}
+
+		public static void WhenConnected(ExtensionClass.action action)
+		{
+			if (State == ConnectionState.Connected)
+				action();
+			else
+				Connected += (s) => action();
 		}
 	}
 }

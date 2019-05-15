@@ -106,6 +106,21 @@ namespace Extensions
 			}
 		}
 
+		public static IEnumerable<T> Distinct<T, T2>(this IEnumerable<T> list, Func<T, T2> convert)
+		{
+			var items = new List<T2>();
+
+			foreach (var item in list)
+			{
+				var c = convert(item);
+				if (!items.Contains(c))
+				{
+					items.Add(c);
+					yield return item;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Returns the first element in the <see cref="IEnumerable{T}"/> that satisfies the <paramref name="predictate"/>
 		/// </summary>
@@ -179,10 +194,22 @@ namespace Extensions
 			return list[i];
 		}
 
-		/// <summary>
-		/// Removes occurences of the <paramref name="source"/> collection from the <see cref="List{T}"/>
-		/// </summary>
-		public static void RemoveRange<T>(this List<T> list, IEnumerable<T> source)
+        public static T TryGet<T>(this IEnumerable<T> enumerable, int index)
+        {
+            try
+            {
+                if (enumerable != null && enumerable.Count() > index)
+                    return enumerable.ElementAtOrDefault(index);
+            }
+            catch { }
+
+            return default;
+        }
+
+        /// <summary>
+        /// Removes occurences of the <paramref name="source"/> collection from the <see cref="List{T}"/>
+        /// </summary>
+        public static void RemoveRange<T>(this List<T> list, IEnumerable<T> source)
 		{
 			foreach (var item in source)
 				list.Remove(item);

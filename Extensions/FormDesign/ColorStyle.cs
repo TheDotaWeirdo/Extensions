@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace Extensions
 {
@@ -53,7 +48,7 @@ namespace Extensions
 				case ColorStyle.Green:
 					return FormDesign.Design.MenuColor;
 				case ColorStyle.Red:
-					return FormDesign.Design.MenuColor;
+					return FormDesign.Design.BackColor;
 				case ColorStyle.Yellow:
 					return FormDesign.Design.MenuColor;
 				default:

@@ -115,5 +115,37 @@ namespace Extensions
 			catch (Exception)
 			{ return "0 seconds"; }
 		}
+
+		public static string ToRelatedString(this DateTime dt)
+		{
+			var ts = new TimeSpan(Math.Abs(dt.Ticks - DateTime.Now.Ticks));
+			var past = dt < DateTime.Now;
+
+			if (ts.TotalHours < 5)
+			{
+				if (past)
+					return ts.ToReadableString() + " ago";
+				return "in " + ts.ToReadableString();
+			}
+			else if (dt.Date == DateTime.Today)
+				return $"Today at {dt.ToString("h:mm tt")}";
+			else if (dt.Date.AnyOf(DateTime.Today.AddDays(1), DateTime.Today.AddDays(-1)))
+				return (past ? "Yesterday at " : "Tomorrow at ") + dt.ToString("h:mm tt");
+			else if (ts.TotalDays < 7)
+				return $"{(past ? "Last " : "Next ")}{dt.DayOfWeek.ToString()} at {dt.ToString("h:mm tt")}";
+
+			var days = ts.Days;
+			var years = days / 365;
+			days -= years * 365;
+			var months = days / 30;
+
+			if (years > 0)
+				return (past ? $"{years} years ago" : $"in {years} years") + $" on {dt.ToReadableString(true, DateFormat.TDMY)}";
+
+			if (months > 0)
+				return (past ? $"{months} months ago" : $"in {months} months") + $" on {dt.ToReadableString(false, DateFormat.TDMY)}";
+
+			return (past ? $"{days} days ago" : $"in {days} days") + $" on {dt.ToReadableString(false, DateFormat.TDMY)}";
+		}
 	}
 }
